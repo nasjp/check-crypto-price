@@ -10,7 +10,10 @@ export type TokenResponse = {
   };
 };
 
-export const fetcher = async (...addresses: string[]) => {
+export const fetcher = async (
+  ...addresses: string[]
+): Promise<TokenResponse[] | null> => {
+  console.log("request...");
   return Promise.all(
     addresses.map(async (address) => {
       return fetch(

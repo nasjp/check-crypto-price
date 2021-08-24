@@ -6,55 +6,42 @@ type Props = {
   addresses: string[];
 };
 
-function useToken(addresses: string[]) {
+const TokenData = ({ addresses }: Props) => {
   const { data, error } = useSWR(addresses, fetcher);
 
-  return {
-    tokens: data,
-    isLoading: !error && !data,
-    isError: error,
-  };
-}
+  if (error) {
+    return <p>error...</p>;
+  }
 
-const TokenData = ({ addresses }: Props) => {
-  const { tokens, isLoading, isError } = useToken(addresses);
+  const isLoading = !error && !data;
+
+  if (isLoading) {
+    return <p>loading...</p>;
+  }
 
   return (
-    <>
-      <h1>Latest token price on PancakeSwap</h1>
-
-      {isLoading && <p>loading...</p>}
-
-      {isError && <p>Error...</p>}
-
-      {!isLoading && (
-        <table>
-          <thead>
-            <tr>
-              <th>name</th>
-              <th>symbol</th>
-              <th>price(USD)</th>
-              <th>price(BND)</th>
-              <th>updated at</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tokens.map((token) => (
-              <>
-                <tr>
-                  <td>{token.data.name}</td>
-                  <td>{token.data.symbol}</td>
-                  <td>{truncatePriceStr(token.data.price, 3)}</td>
-                  <td>{truncatePriceStr(token.data.price_BNB, 8)}</td>
-                  <td>{unixNanoStrToTime(token.updated_at)}</td>
-                </tr>
-              </>
-            ))}
-          </tbody>
-        </table>
-      )}
-      <div></div>
-    </>
+    <table>
+      <thead>
+        <tr>
+          <th>name</th>
+          <th>symbol</th>
+          <th>price(USD)</th>
+          <th>price(BND)</th>
+          <th>updated at</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((token) => (
+          <tr key={token.data.symbol}>
+            <td>{token.data.name}</td>
+            <td>{token.data.symbol}</td>
+            <td>{truncatePriceStr(token.data.price, 3)}</td>
+            <td>{truncatePriceStr(token.data.price_BNB, 8)}</td>
+            <td>{unixNanoStrToTime(token.updated_at)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 };
 

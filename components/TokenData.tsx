@@ -7,7 +7,9 @@ type Props = {
 };
 
 const TokenData = ({ addresses }: Props) => {
-  const { data, error } = useSWR(addresses, fetcher);
+  const { data, error } = useSWR(addresses, fetcher, {
+    refreshInterval: 10000,
+  });
 
   if (error) {
     return <p>error...</p>;
